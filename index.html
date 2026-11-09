@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>منصة المراسلة الآمنة - تسجيل الدخول</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-900 text-white flex items-center justify-center h-screen">
+
+    <div class="bg-slate-800 p-8 rounded-2xl shadow-xl w-96 border border-slate-700">
+        <h2 class="text-2xl font-bold mb-6 text-center text-emerald-400">منصة المراسلة الفورية</h2>
+        
+        <div id="step1">
+            <label class="block mb-2 text-sm">اسم المستخدم (المعرف):</label>
+            <input type="text" id="username" class="w-full p-3 mb-4 bg-slate-700 rounded-lg border border-slate-600 focus:outline-none focus:border-emerald-500" placeholder="مثال: mohammed">
+            
+            <label class="block mb-2 text-sm">معرف تيليجرام (Chat ID):</label>
+            <input type="text" id="telegramId" class="w-full p-3 mb-6 bg-slate-700 rounded-lg border border-slate-600 focus:outline-none focus:border-emerald-500" placeholder="مثال: 813574963">
+            
+            <button onclick="sendCode()" class="w-full bg-emerald-600 hover:bg-emerald-500 p-3 rounded-lg font-bold transition shadow-lg">إرسال كود التحقق عبر تيليجرام</button>
+        </div>
+        
+        <div id="loading" class="hidden text-center mt-4 text-emerald-400 animate-pulse">
+            جاري إرسال الكود إلى تيليجرام...
+        </div>
+    </div>
+
+    <script>
+        // رابط النشر الخاص بك على Google Apps Script
+        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyum9-a_VtILOr6oJ-O9rLpMH3VfzLnQA-SAcXJgiUEdEBD0ut3a40v_SrZCt20FDhM/exec";
+
+        function sendCode() {
+            const username = document.getElementById("username").value.trim();
+            const telegramId = document.getElementById("telegramId").value.trim();
+
+            if(!username || !telegramId) {
+                alert("الرجاء إدخال اسم المستخدم ومعرف تيليجرام بشكل صحيح");
+                return;
+            }
+
+            document.getElementById("loading").classList.remove("hidden");
+
+            // إرسال الطلب لملف Google Sheets عبر الـ Web App
+            fetch(WEB_APP_URL, {
+                method: "POST",
+                mode: "no-cors",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ 
+                    action: "register", 
+                    username: username, 
+                    telegramId: telegramId 
+                })
+            }).then(() => {
+                document.getElementById("loading").classList.add("hidden");
+                alert("تم إرسال طلب الكود بنجاح! تفقد بوت تيليجرام الآن.");
+            }).catch(err => {
+                document.getElementById("loading").classList.add("hidden");
+                alert("حدث خطأ أثناء الإرسال: " + err);
+            });
+        }
+    </script>
+</body>
+</html>
